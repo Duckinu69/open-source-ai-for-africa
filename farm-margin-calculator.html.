@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>African Farm Profit Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:650px;margin:30px auto;padding:20px;background:#f4f7f4;color:#183323}
+main{background:white;padding:24px;border-radius:14px}
+h1{font-size:25px}
+label{display:block;margin-top:16px;font-weight:bold}
+input,select,button{width:100%;padding:12px;margin-top:7px;box-sizing:border-box;font-size:16px}
+button{background:#176b42;color:white;border:0;border-radius:8px;margin-top:22px;font-weight:bold}
+#result{margin-top:20px;padding:16px;background:#e8f4ec;border-radius:10px;display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>🌍 African Farm Profit Calculator</h1>
+<p>Calculate farm revenue, production costs and gross profit.</p>
+
+<label>Currency</label>
+<select id="currency">
+<option value="FCFA">FCFA</option>
+<option value="EUR">EUR</option>
+<option value="USD">USD</option>
+</select>
+
+<label>Land area (hectares)</label>
+<input id="area" type="number" min="0" step="any" placeholder="Example: 1">
+
+<label>Expected harvest (kg)</label>
+<input id="harvest" type="number" min="0" step="any" placeholder="Example: 5000">
+
+<label>Selling price per kg</label>
+<input id="price" type="number" min="0" step="any" placeholder="Example: 1000">
+
+<label>Total production costs</label>
+<input id="cost" type="number" min="0" step="any" placeholder="Seeds, labour, water, transport...">
+
+<button onclick="calculate()">Calculate farm profitability</button>
+
+<div id="result" aria-live="polite"></div>
+</main>
+
+<script>
+function calculate(){
+ const area=Number(document.getElementById('area').value);
+ const harvest=Number(document.getElementById('harvest').value);
+ const price=Number(document.getElementById('price').value);
+ const cost=Number(document.getElementById('cost').value);
+ const currency=document.getElementById('currency').value;
+ const result=document.getElementById('result');
+
+ if(![area,harvest,price,cost].every(Number.isFinite) ||
+ area<=0 || harvest<0 || price<0 || cost<0){
+  result.style.display='block';
+  result.textContent='Please enter a valid land area and non-negative figures.';
+  return;
+ }
+
+ const revenue=harvest*price;
+ const profit=revenue-cost;
+ const fmt=n=>new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n);
+
+ result.style.display='block';
+ result.innerHTML=`
+ <h2>Farm results</h2>
+ <p>Land area: ${fmt(area)} hectares</p>
+ <p>Expected revenue: ${fmt(revenue)} ${currency}</p>
+ <p>Production costs: ${fmt(cost)} ${currency}</p>
+ <h3>Gross ${profit>=0?'profit':'loss'}: ${fmt(Math.abs(profit))} ${currency}</h3>
+ <p>Revenue per hectare: ${fmt(revenue/area)} ${currency}</p>
+ <p>Gross margin: ${revenue>0?fmt(profit/revenue*100)+'%':'Not applicable'}</p>`;
+}
+</script>
+</body>
+</html>
